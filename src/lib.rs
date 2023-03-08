@@ -46,6 +46,8 @@
 
 use rand::rngs::SmallRng;
 use rand::{Rng, SeedableRng};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 mod generator;
 
@@ -55,67 +57,89 @@ use generator::{Envelope, Filterable, HighLowPassFilter, Oscillator, Phaser};
 
 /// Defines a sound effect configuration for a Generator
 #[derive(Copy, Clone)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(default))]
 pub struct Sample {
     /// Oscillator wave type
     pub wave_type: WaveType,
     /// Oscillator base frequency. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_base_freq"))]
     pub base_freq: f64,
     /// Oscillator frequency limit. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_freq_limit"))]
     pub freq_limit: f64,
     /// Oscillator frequency change over time. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_freq_ramp"))]
     pub freq_ramp: f64,
     /// `freq_ramp` change over time. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_freq_dramp"))]
     pub freq_dramp: f64,
     /// Oscillator square wave duty cycle. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_duty"))]
     pub duty: f32,
     /// Oscillator square wave duty cycle change over time. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_duty_ramp"))]
     pub duty_ramp: f32,
 
     /// Vibrato strength. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_vib_strength"))]
     pub vib_strength: f64,
     /// Vibrato speed. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_vib_speed"))]
     pub vib_speed: f64,
     /// Vibrato delay. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(default))]
     pub vib_delay: f32,
 
     /// Duration of attack envelope. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_env_attack"))]
     pub env_attack: f32,
     /// Duration of sustain envelope. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_env_sustain"))]
     pub env_sustain: f32,
     /// Duration of decay envelope. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_env_decay"))]
     pub env_decay: f32,
     /// Amount of "punch" in sustain envelope. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_env_punch"))]
     pub env_punch: f32,
 
     /// Low pass filter resonance. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_lpf_resonance"))]
     pub lpf_resonance: f32,
     /// Low pass filter cutoff frequency. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_lpf_freq"))]
     pub lpf_freq: f32,
     /// Low pass filter cutoff frequency change over time. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_lpf_ramp"))]
     pub lpf_ramp: f32,
     /// High pass filter cutoff frequency. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_hpf_freq"))]
     pub hpf_freq: f32,
     /// High pass filter cutoff frequency change over time. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_hpf_ramp"))]
     pub hpf_ramp: f32,
 
     /// Phaser temporal offset. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_pha_offset"))]
     pub pha_offset: f32,
     /// Phaser temporal offset change over time. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_pha_ramp"))]
     pub pha_ramp: f32,
 
     /// Sample repeat speed. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_repeat_speed"))]
     pub repeat_speed: f32,
 
     /// Arpeggio interval. Value must be between `0.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_arp_speed"))]
     pub arp_speed: f32,
     /// Arpeggio step in frequency. Value must be between `-1.0` and `1.0`.
+    #[cfg_attr(feature = "serde", serde(rename = "p_arp_mod"))]
     pub arp_mod: f64,
 }
 
-#[allow(clippy::new_without_default)]
-impl Sample {
-    /// Constructs a new Sample with default settings
-    pub fn new() -> Sample {
+impl Default for Sample {
+    fn default() -> Self {
         Sample {
             wave_type: WaveType::Square,
             base_freq: 0.3,
@@ -148,6 +172,13 @@ impl Sample {
             arp_speed: 0.0,
             arp_mod: 0.0,
         }
+    }
+}
+
+impl Sample {
+    /// Constructs a new Sample with default settings
+    pub fn new() -> Self {
+        Sample::default()
     }
 
     /// Asserts all fields' values to be within correct values

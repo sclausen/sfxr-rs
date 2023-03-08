@@ -9,14 +9,20 @@ repository = "https://github.com/bzar/sfxr-rs"
 documentation = "https://docs.rs/sfxr/"
 
 license = "MIT"
-keywords = ["sfx","sound","effect"]
+keywords = ["sfx", "sound", "effect"]
 categories = ["multimedia::audio"]
 
+[features]
+serde = ["dep:serde_json", "dep:serde", "dep:serde_repr"]
+
 [dependencies]
-rand = { version = "0.8", features = ["small_rng"]}
+rand = { version = "0.8", features = ["small_rng"] }
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_repr = { version = "0.1", optional = true }
+serde_json = { version = "1.0", optional = true }
 
 [dev-dependencies]
-sdl2 = "0.34.5"                         # SDL2 bindings for Rust
+sdl2 = "0.34.5"                                                # SDL2 bindings for Rust
 cpal = "0.11.0"
 criterion = { version = "0.3.5", features = ["html_reports"] }
 

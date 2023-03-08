@@ -2,10 +2,15 @@ use rand::rngs::SmallRng;
 use rand::{Rng, SeedableRng};
 use std::f32::consts::PI;
 
-#[derive(PartialEq, Copy, Clone)]
+#[cfg(feature = "serde")]
+use serde_repr::{Deserialize_repr, Serialize_repr};
+
+#[derive(PartialEq, Copy, Clone, Debug, Default)]
+#[cfg_attr(feature = "serde", repr(u8), derive(Deserialize_repr, Serialize_repr))]
 pub enum WaveType {
     Square,
     Triangle,
+    #[default]
     Sine,
     Noise,
 }
