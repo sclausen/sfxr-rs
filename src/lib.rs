@@ -56,7 +56,7 @@ pub use generator::WaveType;
 use generator::{Envelope, Filterable, HighLowPassFilter, Oscillator, Phaser};
 
 /// Defines a sound effect configuration for a Generator
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize), serde(default))]
 pub struct Sample {
     /// Oscillator wave type
@@ -196,8 +196,8 @@ impl Sample {
             "freq_ramp must be between -1.0 and 1.0"
         );
         assert!(
-            self.freq_dramp >= 0.0 && self.freq_dramp <= 1.0,
-            "freq_dramp must be between 0.0 and 1.0"
+            self.freq_dramp >= -1.0 && self.freq_dramp <= 1.0,
+            "freq_dramp must be between -1.0 and 1.0"
         );
         assert!(
             self.duty >= 0.0 && self.duty <= 1.0,
